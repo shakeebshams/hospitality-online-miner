@@ -1,0 +1,25 @@
+{
+  "name": "ho-scraping",
+  "version": "1.0.0",
+  "description": "",
+  "main": "scraper.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node scraper.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shakeebshams/hospitality-online-miner.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shakeebshams/hospitality-online-miner/issues"
+  },
+  "homepage": "https://github.com/shakeebshams/hospitality-online-miner#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "x-ray": "^2.3.4"
+  }
+}
