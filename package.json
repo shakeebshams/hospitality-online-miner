@@ -2,11 +2,11 @@
   "name": "ho-scraping",
   "version": "1.0.0",
   "description": "",
-  "main": "scraper.js",
+  "main": "parent-details-scraper.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node scraper.js"
+    "start": "node parent-details-scraper.js"
   },
   "repository": {
     "type": "git",

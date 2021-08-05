@@ -37,10 +37,15 @@ async function main() {
             }
         });
         console.log(cityList.length);
+        let faulty = ['https://www.hospitalityonline.com/soho-house-co-americas']
         for (let i = 0; i < cityList.length; i++) {
             console.log("processing hotel #" + i);
             let hotel_url = cityList[i];
-            await process_parent(hotel_url);
+            if (faulty.includes(hotel_url)) {
+                console.log('faulty url, skipping')
+            } else {
+                await process_parent(hotel_url);
+            }
         }
         return 1
         
@@ -48,12 +53,42 @@ async function main() {
 
 }
 
-//main()
+main()
 let baseUrl = 'https://www.hospitalityonline.com/soho-house-co-americas'
 
 
-process_parent(baseUrl)
 async function process_parent(baseUrl) {
+
+    // Name
+    let name = await xray(baseUrl, 'h1 a')
+    if (!name) {
+        name = 'N/A'
+    }
+
+    //City
+    let city = await xray(baseUrl, 'p.mb-2 span')
+    if (!city) {
+        city = 'N/A'
+    }
+
+    //State
+    let state = await xray(baseUrl, 'p.mb-2 abbr@title')
+    if (!state) {
+        state = 'N/A'
+    }
+
+    //Link
+    let link = await xray(baseUrl, '.property_locations@href')
+    if (!link) {
+        link = 'N/A'
+    }
+
+    //Children
+    let children_link = await xray(baseUrl, '.url@href')
+    if (!link) {
+        link = 'N/A'
+    }
+
     //Number of Children
     let num_children
     num_children = await xray(baseUrl, '.property_locations')
@@ -62,62 +97,29 @@ async function process_parent(baseUrl) {
     } else {
         num_children = 'N/A'
     }
-    console.log(num_children)
-    // Name
-    let name = await xray(baseUrl, 'h1 a')
-    if (!name) {
-        name = 'N/A'
-    }
-    console.log(name)
-    //City
-    let city = await xray(baseUrl, 'p.mb-2 span')
-    if (!city) {
-        city = 'N/A'
-    }
-    console.log(city)
-    //State
-    let state = await xray(baseUrl, 'p.mb-2 abbr@title')
-    if (!state) {
-        state = 'N/A'
-    }
-    console.log(state)
-    //Link
-    let link = await xray(baseUrl, '.property_locations@href')
-    if (!link) {
-        link = 'N/A'
-    }
-    console.log(link)
-    //Children
-    let children_link = await xray(baseUrl, '.url@href')
-    if (!link) {
-        link = 'N/A'
-    }
-    console.log(children_link)
-    console.log('arbs')
+
     const jumpcut = {
-        name: name,
-        city: city,
-        state: state,
-        website: link,
-        num_of_children: num_children,
-        children_properties: children_link,
+        "name": name,
+        "city": city,
+        "state": state,
+        "website": link,
+        "num_of_children": num_children,
+        "children_properties": children_link,
     }
-    console.log(jumpcut)
-    /*
-    let collection2 = db.collection("parentdetails2");
-    await collection2.findOne({name: parent_details.name}, async function(err, doc) {
+    
+    let collection2 = db.collection("parentdetails4")
+    await collection2.findOne({name: jumpcut.name}, async function(err, doc) {
         if (!doc) {
-            await collection2.insertOne(parent_details, function(err, res) {
+            await collection2.insertOne(jumpcut, function(err, res) {
                 if (err) {
-                    console.log(err);
+                    console.log(err)
                 } else {
-                    console.log("ADDED " + parent_details.name);
+                    console.log("ADDED " + jumpcut.name)
                 }
-            });
+            })
         } else {
             console.log("already exists: " + link)
         }
-    });
-    */
-    let async_stall = await xray(baseUrl, 'p.mb-2 abbr@title')
+    })
+    
 }
