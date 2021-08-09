@@ -44,7 +44,20 @@ async function main() {
             if (faulty.includes(hotel_url)) {
                 console.log('faulty url, skipping')
             } else {
-                await process_parent(hotel_url);
+                try {
+                    await process_parent(hotel_url);
+                } catch (err) {
+                    console.log('faulty url')
+                    let collection2 = db.collection("faulty")
+                    
+                    collection2.insertOne({url: hotel_url}, function(err, res) {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            console.log("ADDED to faulty")
+                        }
+                    })
+                }
             }
         }
         return 1
@@ -58,7 +71,6 @@ let baseUrl = 'https://www.hospitalityonline.com/soho-house-co-americas'
 
 
 async function process_parent(baseUrl) {
-
     // Name
     let name = await xray(baseUrl, 'h1 a')
     if (!name) {
@@ -107,7 +119,7 @@ async function process_parent(baseUrl) {
         "children_properties": children_link,
     }
     
-    let collection2 = db.collection("parentdetails4")
+    let collection2 = db.collection("parentdetails5")
     await collection2.findOne({name: jumpcut.name}, async function(err, doc) {
         if (!doc) {
             await collection2.insertOne(jumpcut, function(err, res) {
