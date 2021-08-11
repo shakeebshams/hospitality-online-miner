@@ -66,10 +66,10 @@ async function main() {
 
 }
 
-main()
+//main()
 let baseUrl = 'https://www.hospitalityonline.com/soho-house-co-americas'
 
-
+process_parent(baseUrl)
 async function process_parent(baseUrl) {
     // Name
     let name = await xray(baseUrl, 'h1 a')
@@ -94,12 +94,14 @@ async function process_parent(baseUrl) {
     if (!link) {
         link = 'N/A'
     }
+    console.log(link)
 
     //Children
-    let children_link = await xray(baseUrl, '.url@href')
-    if (!link) {
-        link = 'N/A'
+    let children_link = await xray(baseUrl, '.website-url .url @href')
+    if (children_link === null) {
+        children_link = 'N/A'
     }
+    console.log(children_link)
 
     //Number of Children
     let num_children

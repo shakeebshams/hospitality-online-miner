@@ -20,6 +20,7 @@
   "homepage": "https://github.com/shakeebshams/hospitality-online-miner#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "cheerio": "^0.22.0",
     "mongodb": "^4.1.0",
     "monodb": "^1.5.1",
     "x-ray": "^2.3.4"
