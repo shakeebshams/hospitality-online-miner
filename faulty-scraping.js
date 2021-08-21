@@ -5,6 +5,7 @@ const { MongoClient } = pkg;
 const DBurl = 'mongodb://127.0.0.1:27017'
 //using cheerio
 import cheerio from 'cheerio'
+import util from 'util'
 
 const dbName = 'hourls'
 let db
@@ -49,7 +50,7 @@ async function main() {
                     await process_parent(hotel_url);
                 } catch (err) {
                     console.log('faulty url')
-                    let collection2 = db.collection("faulty2")
+                    let collection2 = db.collection("nullstuff")
                     
                     collection2.insertOne({url: hotel_url}, function(err, res) {
                         if (err) {
@@ -76,29 +77,47 @@ async function process_parent(baseUrl) {
     console.log(response.status)
     if (response.status === 200) {
         const $ = cheerio.load(response.data)
-        let name = $('.info-well h1 a').text();
-        let city = $('.info-well .mb-2 span').first().text();
-        let state = $('.info-well .mb-2 abbr').text()
-        let website = $('.website-url .url').text()
-        let num_children = $('.property_locations').text()
+        let phone = $('.info-well p').eq(1).text().replace(/\n|\r/g, "").trim();
+        let name = $('.info-well h1 a').text().replace(/\n|\r/g, "").trim();
+        let city = $('.info-well .mb-2 span').first().text().replace(/\n|\r/g, "").trim();
+        let state = $('.info-well .mb-2 abbr').text().replace(/\n|\r/g, "").trim()
+        let website = $('.website-url .url').text().replace(/\n|\r/g, "").trim()
+        let num_children = $('.property_locations').text().replace(/\n|\r/g, "").trim()
+        const diff = (diffMe, diffBy) => diffMe.split(diffBy).join('')
+        let block = $('.info-well .mb-2 span').text().replace(/\n|\r/g, "").trim();
+        let zipcode = diff(block, city)
+        //console.log(`ZIP: ${zipcode}`)
+        /*
+        let address = $('.info-well .mb-2').each(function(i, item){
+            console.log(item);
+        })
+        */
+        let address = $('.info-well .mb-2').text()
+        let address_split = address.split(/\r?\n/)
+        //console.log(`split: ${address_split}`)
+        let actual_address = address_split[1].trim()
+        let full_address = `${actual_address}, ${city}, ${state}, ${zipcode}`
+        //console.log(full_address)
         if (num_children) {
             num_children = num_children.split(' ')[1]
         } else {
             num_children = 'N/A'
         }
         let source = baseUrl + '/locations'
-        
         const jumpcut = {
             "name": name,
+            "street_address": actual_address,
             "city": city,
             "state": state,
+            "zipcode": zipcode,
+            "phone": phone,
             "source": source,
             "num_of_children": num_children,
             "website": website,
         }
         console.log(jumpcut)
         
-        let collection2 = db.collection("parentdetails7")
+        let collection2 = db.collection("parentdetails10")
         await collection2.findOne({name: jumpcut.name}, async function(err, doc) {
             if (!doc) {
                 await collection2.insertOne(jumpcut, function(err, res) {
