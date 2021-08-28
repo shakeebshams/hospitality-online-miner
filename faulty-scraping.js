@@ -20,7 +20,7 @@ async function main() {
         db = client.db(dbName);
         console.log(`Connected MongoDB: ${DBurl}`);
         console.log(`Database: ${dbName}`);
-        let collection = db.collection("hourls3");
+        let collection = db.collection("parentdetails9");
         let cursor = collection.find({});
         //console.log(cursor);
         //let docArray = cursor.toArray();
@@ -31,7 +31,7 @@ async function main() {
             try {
                 if (doc.url) {
                     //console.log("city_id: " + doc.id);
-                    cityList.push(doc.url);
+                    cityList.push(doc.spurce);
                     //await activity_request(doc.id);
                 }
             } catch (err) {
@@ -47,7 +47,8 @@ async function main() {
                 console.log('faulty url, skipping')
             } else {
                 try {
-                    await process_parent(hotel_url);
+                    console.log(`processing ${hotel_url}`)
+                    //await process_parent(hotel_url);
                 } catch (err) {
                     console.log('faulty url')
                     let collection2 = db.collection("nullstuff")
